@@ -15,7 +15,7 @@ export default function HeartPlayApp() {
   async function generateActivities() {
     setLoading(true);
     setActivities("");
-    const res = await fetch("http://localhost:8000/generate-activities", {
+    const res = await fetch("https://heartplay.onrender.com/generate-activities", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
