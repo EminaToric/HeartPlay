@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -37,7 +38,7 @@ export default function HeartPlayApp() {
       setActivities(data.activities || "No suggestions returned.");
     } catch (err) {
       console.error(err);
-      setActivities("⚠️ Something went wrong. Please try again.");
+      setActivities("\u26a0\ufe0f Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -45,16 +46,16 @@ export default function HeartPlayApp() {
 
   return (
     <div className="min-h-screen bg-pink-50 py-10 px-4 flex flex-col items-center text-gray-800">
-      <h1 className="text-4xl font-bold mb-4">💖 HeartPlay</h1>
+      <h1 className="text-4xl font-bold mb-4">\ud83d\udc96 HeartPlay</h1>
       <p className="mb-6 text-center max-w-xl">
         Discover joyful, development-friendly bonding activities for you and your child ✨
       </p>
 
       <div className="grid gap-4 w-full max-w-md">
-        <label className="text-sm font-medium">Childs Age</label>
+        <label className="text-sm font-medium">Child's Age</label>
         <Input type="number" placeholder="e.g., 4" value={age} onChange={(e) => setAge(e.target.value)} />
 
-        <label className="text-sm font-medium">Childs Interests </label>
+        <label className="text-sm font-medium">Child's Interests (comma-separated)</label>
         <Input type="text" placeholder="e.g., art, animals, blocks" value={interests} onChange={(e) => setInterests(e.target.value)} />
 
         <label className="text-sm font-medium">Time Available (in minutes)</label>
@@ -74,7 +75,7 @@ export default function HeartPlayApp() {
       {activities && (
         <Card className="mt-8 w-full max-w-xl bg-white shadow-md">
           <CardContent>
-            <h2 className="text-xl font-semibold mb-2">🎉 Here are your HeartPlay moments:</h2>
+            <h2 className="text-xl font-semibold mb-2">\ud83c\udf89 Here are your HeartPlay moments:</h2>
             <Textarea readOnly value={activities} className="whitespace-pre-wrap bg-pink-100" rows={8} />
           </CardContent>
         </Card>
