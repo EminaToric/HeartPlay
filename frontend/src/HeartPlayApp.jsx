@@ -1,4 +1,3 @@
-// HeartPlayApp.jsx
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -52,13 +51,21 @@ export default function HeartPlayApp() {
       </p>
 
       <div className="grid gap-4 w-full max-w-md">
-        <Input type="number" placeholder="Child's age (e.g., 4)" value={age} onChange={(e) => setAge(e.target.value)} />
-        <Input type="text" placeholder="Interests (e.g., animals, art, dancing)" value={interests} onChange={(e) => setInterests(e.target.value)} />
-        <Input type="number" placeholder="Time available (minutes)" value={time} onChange={(e) => setTime(e.target.value)} />
+        <label className="text-sm font-medium">Childs Age</label>
+        <Input type="number" placeholder="e.g., 4" value={age} onChange={(e) => setAge(e.target.value)} />
+
+        <label className="text-sm font-medium">Childs Interests (comma-separated)</label>
+        <Input type="text" placeholder="e.g., art, animals, blocks" value={interests} onChange={(e) => setInterests(e.target.value)} />
+
+        <label className="text-sm font-medium">Time Available (in minutes)</label>
+        <Input type="number" placeholder="e.g., 30" value={time} onChange={(e) => setTime(e.target.value)} />
+
+        <label className="text-sm font-medium">Activity Setting</label>
         <select className="p-2 rounded border border-pink-300" value={setting} onChange={(e) => setSetting(e.target.value)}>
           <option value="indoor">Indoor</option>
           <option value="outdoor">Outdoor</option>
         </select>
+
         <Button onClick={generateActivities} disabled={loading}>
           {loading ? "Generating..." : "Generate Activities"}
         </Button>
