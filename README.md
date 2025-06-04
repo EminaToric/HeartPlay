@@ -1,28 +1,26 @@
 # 💖 HeartPlay
 
 **HeartPlay** is an AI-powered web app that helps parents discover creative, developmentally-appropriate bonding activities based on their child's age, interests, time, and setting (indoor/outdoor). It blends thoughtful UX with child development expertise to support meaningful parent-child connection.
+## 🌟 Features
 
-## 🧠 Features
+- FastAPI-powered backend using OpenAI's GPT API
+- React + Vite frontend styled with Tailwind CSS
+- Dynamic activity generation based on user inputs
+- Clean, responsive UI
+- Environment variable support for secure API key handling
 
-- Input-based activity generation (age, interests, time, location)
-- OpenAI-powered suggestions using child development principles
-- Clean, mobile-responsive UI built with React + Tailwind
-- Backend API powered by FastAPI
+## 🧩 Tech Stack
 
-## 🛠 Tech Stack
-
-- Frontend: React, Tailwind CSS
-- Backend: FastAPI, OpenAI API
-- Deployment: GitHub + Render (or your preferred platform)
-
-## 🚀 Getting Started
-
-1. Clone this repo  
-2. Add your `.env` with OpenAI API key  
-3. Run backend: `uvicorn app:app --reload`  
-4. Run frontend: `npm run dev`  
-5. Visit `http://localhost:3000`
+- **Frontend:** React, Vite, Tailwind CSS
+- **Backend:** Python, FastAPI
+- **API:** OpenAI GPT-3.5
+- **Deployment:** Render (backend), Vercel (frontend)
 
 ## ✨ Inspiration
 
 Created by Emina Toric to make playtime intentional, developmentally rich, and joyful for every family.
+
+![image](https://github.com/user-attachments/assets/b073cf26-1071-4b72-a6a1-f45b105c05ce)
+
+
+
