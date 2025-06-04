@@ -17,20 +17,25 @@ export default function HeartPlayApp() {
   async function generateActivities() {
     setLoading(true);
     setActivities("");
-    const res = await fetch(`${BACKEND_URL}/generate-activities`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        age: Number(age),
-        interests: interests.split(",").map((i) => i.trim()),
-        time_available: Number(time),
-        setting: setting
-      })
-    });
-    const data = await res.json();
-    setActivities(data.activities || "Something went wrong.");
-    setLoading(false);
-  }
+
+const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/generate-activities`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    age: Number(age),
+    interests: interests.split(",").map((i) => i.trim()),
+    time_available: Number(time),
+    setting: setting
+  })
+});
+
+if (!res.ok) {
+  const errorText = await res.text();
+  console.error("API error:", errorText);
+  setActivities("⚠️ Something went wrong. Please try again.");
+  setLoading(false);
+  return;
+}
 
   return (
     <div className="min-h-screen bg-pink-50 py-10 px-4 flex flex-col items-center text-gray-800">
