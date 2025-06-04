@@ -1,21 +1,15 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from typing import List
 import openai
 import os
-
-# Set your OpenAI API key here or use environment variables
 from dotenv import load_dotenv
+
 load_dotenv()
-
-import os
 openai.api_key = os.getenv("OPENAI_API_KEY")
-
 
 app = FastAPI()
 
-# Allow frontend to access the backend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,38 +20,27 @@ app.add_middleware(
 
 class ActivityRequest(BaseModel):
     age: int
-    interests: List[str]
-    time_available: int  # in minutes
-    setting: str  # indoor or outdoor
+    interests: list[str]
+    time_available: int
+    setting: str
 
 @app.post("/generate-activities")
-async def generate_activities(data: ActivityRequest):
-    prompt = f"""
-    You are a child development expert and creative play designer. 
-    Suggest 3 unique, bonding-focused activities for a parent and their child to do together.
-
-    Child's age: {data.age}
-    Interests: {', '.join(data.interests)}
-    Time available: {data.time_available} minutes
-    Setting: {data.setting}
-
-    Ensure the activities are:
-    - Fun and imaginative
-    - Supportive of development for that age
-    - Easy to set up at home or outdoors
-    - Written in warm, clear, simple language
-
-    Output should be a list format with emojis.
-    """
+async def generate_activities(request: ActivityRequest):
+    prompt = (
+        f"You are an expert in child development and parent-child bonding. "
+        f"Generate 3 creative, age-appropriate bonding activities for a {request.age}-year-old child. "
+        f"The activities should match the following interests: {', '.join(request.interests)}. "
+        f"They should take around {request.time_available} minutes and be suitable for a(n) {request.setting} setting. "
+        f"Format the response as a short, friendly list."
+    )
 
     try:
         response = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
-            temperature=0.8,
-            max_tokens=300
+            temperature=0.7
         )
-        activities = response.choices[0].message['content'].strip()
-        return {"activities": activities}
+        content = response.choices[0].message.content
+        return {"activities": content}
     except Exception as e:
-        return {"error": str(e)}
+        return {"activities": f"Error: {str(e)}"}
