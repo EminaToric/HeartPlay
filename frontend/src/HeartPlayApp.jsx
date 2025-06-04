@@ -1,10 +1,9 @@
+// HeartPlayApp.jsx
 import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function HeartPlayApp() {
   const [age, setAge] = useState(4);
@@ -17,25 +16,33 @@ export default function HeartPlayApp() {
   async function generateActivities() {
     setLoading(true);
     setActivities("");
+    try {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/generate-activities`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          age: Number(age),
+          interests: interests.split(",").map((i) => i.trim()),
+          time_available: Number(time),
+          setting: setting,
+        }),
+      });
 
-const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/generate-activities`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    age: Number(age),
-    interests: interests.split(",").map((i) => i.trim()),
-    time_available: Number(time),
-    setting: setting
-  })
-});
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("API Error:", errorText);
+        throw new Error("Failed to fetch activities");
+      }
 
-if (!res.ok) {
-  const errorText = await res.text();
-  console.error("API error:", errorText);
-  setActivities("⚠️ Something went wrong. Please try again.");
-  setLoading(false);
-  return;
-}
+      const data = await res.json();
+      setActivities(data.activities || "No suggestions returned.");
+    } catch (err) {
+      console.error(err);
+      setActivities("⚠️ Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-pink-50 py-10 px-4 flex flex-col items-center text-gray-800">
@@ -48,7 +55,7 @@ if (!res.ok) {
         <Input type="number" placeholder="Child's age (e.g., 4)" value={age} onChange={(e) => setAge(e.target.value)} />
         <Input type="text" placeholder="Interests (e.g., animals, art, dancing)" value={interests} onChange={(e) => setInterests(e.target.value)} />
         <Input type="number" placeholder="Time available (minutes)" value={time} onChange={(e) => setTime(e.target.value)} />
-        <select className="p-2 rounded border" value={setting} onChange={(e) => setSetting(e.target.value)}>
+        <select className="p-2 rounded border border-pink-300" value={setting} onChange={(e) => setSetting(e.target.value)}>
           <option value="indoor">Indoor</option>
           <option value="outdoor">Outdoor</option>
         </select>
