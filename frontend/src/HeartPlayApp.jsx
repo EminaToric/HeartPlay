@@ -75,7 +75,7 @@ export default function HeartPlayApp() {
       {activities && (
         <Card className="mt-8 w-full max-w-xl bg-white shadow-md">
           <CardContent>
-            <h2 className="text-xl font-semibold mb-2">\ud83c\udf89 Here are your HeartPlay moments:</h2>
+            <h2 className="text-xl font-semibold mb-2"> Here are your HeartPlay moments:</h2>
             <Textarea readOnly value={activities} className="whitespace-pre-wrap bg-pink-100" rows={8} />
           </CardContent>
         </Card>
