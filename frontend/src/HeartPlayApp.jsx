@@ -46,7 +46,7 @@ export default function HeartPlayApp() {
 
   return (
     <div className="min-h-screen bg-pink-50 py-10 px-4 flex flex-col items-center text-gray-800">
-      <h1 className="text-4xl font-bold mb-4">\ud83d\udc96 HeartPlay</h1>
+      <h1 className="text-4xl font-bold mb-4">HeartPlay</h1>
       <p className="mb-6 text-center max-w-xl">
         Discover joyful, development-friendly bonding activities for you and your child ✨
       </p>
