@@ -54,7 +54,7 @@ export default function HeartPlayApp() {
         <label className="text-sm font-medium">Childs Age</label>
         <Input type="number" placeholder="e.g., 4" value={age} onChange={(e) => setAge(e.target.value)} />
 
-        <label className="text-sm font-medium">Childs Interests (comma-separated)</label>
+        <label className="text-sm font-medium">Childs Interests </label>
         <Input type="text" placeholder="e.g., art, animals, blocks" value={interests} onChange={(e) => setInterests(e.target.value)} />
 
         <label className="text-sm font-medium">Time Available (in minutes)</label>
