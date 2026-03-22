@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-const API_URL = "https://heartplay-backend.onrender.com/generate-activities";
-
 // ── Palette ──────────────────────────────────────────────
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
@@ -31,14 +29,12 @@ const styles = `
     min-height: 100vh;
   }
 
-  /* ── Layout ── */
   .hp-root {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
   }
 
-  /* ── Header ── */
   .hp-header {
     padding: 2rem 2.5rem 1.5rem;
     display: flex;
@@ -82,7 +78,6 @@ const styles = `
     letter-spacing: 0.05em;
   }
 
-  /* ── Hero ── */
   .hp-hero {
     text-align: center;
     padding: 3.5rem 2rem 2rem;
@@ -122,7 +117,6 @@ const styles = `
     line-height: 1.7;
   }
 
-  /* ── Steps indicator ── */
   .hp-steps {
     display: flex;
     justify-content: center;
@@ -185,12 +179,11 @@ const styles = `
 
   .hp-step-line.done { background: var(--sage); }
 
-  /* ── Card ── */
   .hp-card {
     background: var(--white);
     border: 1px solid rgba(0,0,0,0.07);
     border-radius: 2px;
-    padding: 2rem 2rem 2rem;
+    padding: 2rem;
     margin: 1.5rem auto;
     max-width: 560px;
     width: calc(100% - 3rem);
@@ -228,7 +221,6 @@ const styles = `
     line-height: 1.5;
   }
 
-  /* ── Age slider ── */
   .hp-age-display {
     text-align: center;
     margin-bottom: 1.25rem;
@@ -300,7 +292,6 @@ const styles = `
     margin-top: 0.25rem;
   }
 
-  /* ── Interest chips ── */
   .hp-interest-grid {
     display: flex;
     flex-wrap: wrap;
@@ -321,6 +312,7 @@ const styles = `
     align-items: center;
     gap: 0.4rem;
     user-select: none;
+    font-family: 'DM Sans', sans-serif;
   }
 
   .hp-chip:hover {
@@ -370,7 +362,6 @@ const styles = `
 
   .hp-btn-add:hover { background: var(--ink-light); }
 
-  /* ── Setting cards ── */
   .hp-setting-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -411,7 +402,6 @@ const styles = `
 
   .hp-setting-card.selected .hp-setting-label { color: var(--terracotta); }
 
-  /* ── Time pills ── */
   .hp-time-grid {
     display: flex;
     flex-wrap: wrap;
@@ -443,7 +433,6 @@ const styles = `
     color: white;
   }
 
-  /* ── Buttons ── */
   .hp-btn-primary {
     width: 100%;
     padding: 1rem;
@@ -500,7 +489,6 @@ const styles = `
     margin-top: 1.5rem;
   }
 
-  /* ── Loading ── */
   .hp-loading {
     text-align: center;
     padding: 3rem 2rem;
@@ -534,7 +522,6 @@ const styles = `
     margin-top: 0.4rem;
   }
 
-  /* ── Result card ── */
   .hp-result {
     animation: slideUp 0.4s ease;
   }
@@ -637,7 +624,6 @@ const styles = `
     color: var(--terracotta);
   }
 
-  /* ── Error ── */
   .hp-error {
     padding: 1rem 1.25rem;
     background: var(--blush-pale);
@@ -647,7 +633,6 @@ const styles = `
     margin-top: 1rem;
   }
 
-  /* ── Footer ── */
   .hp-footer {
     text-align: center;
     padding: 2rem;
@@ -666,7 +651,6 @@ const styles = `
     text-decoration: none;
   }
 
-  /* ── Responsive ── */
   @media (max-width: 480px) {
     .hp-header { padding: 1.25rem 1.5rem; }
     .hp-hero { padding: 2rem 1.5rem 1rem; }
@@ -675,7 +659,6 @@ const styles = `
   }
 `;
 
-// ── Data ──────────────────────────────────────────────────
 const INTERESTS = [
   { label: "Art & Drawing", emoji: "🎨" },
   { label: "Music", emoji: "🎵" },
@@ -716,8 +699,7 @@ function getAgeStage(age) {
 
 const STEPS = ["Child", "Interests", "Setup", "Activity"];
 
-// ── Component ─────────────────────────────────────────────
-export default function App() {
+export default function HeartPlayApp() {
   const [step, setStep] = useState(0);
   const [age, setAge] = useState(5);
   const [interests, setInterests] = useState([]);
@@ -756,18 +738,28 @@ export default function App() {
     setError("");
     setStep(3);
     try {
-      const res = await fetch(API_URL, {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": import.meta.env.VITE_ANTHROPIC_KEY,
+          "anthropic-version": "2023-06-01",
+          "anthropic-dangerous-direct-browser-access": "true",
+        },
         body: JSON.stringify({
-          age: age.toString(),
-          interests,
-          time_available: time,
-          setting,
+          model: "claude-haiku-4-5-20251001",
+          max_tokens: 1000,
+          messages: [
+            {
+              role: "user",
+              content: `You are a child development expert and creative play specialist. Generate a bonding activity that a parent can do with their ${age}-year-old child. The child enjoys ${interests.join(", ")}. The activity should be suitable for ${setting} settings and take about ${time} minutes. Make it engaging, developmentally beneficial, and fun. Write warmly and directly — no bullet points, just a flowing description of the activity.`
+            }
+          ],
         }),
       });
       const data = await res.json();
-      setActivity(data.activities || "Something went wrong — please try again.");
+      const text = data.content?.map(b => b.text || "").join("") || "";
+      setActivity(text || "Something went wrong — please try again.");
     } catch (e) {
       setError("Couldn't reach the server. Please try again in a moment.");
       setActivity("");
@@ -791,7 +783,6 @@ export default function App() {
       <style>{styles}</style>
       <div className="hp-root">
 
-        {/* Header */}
         <header className="hp-header">
           <div className="hp-logo">
             <div className="hp-logo-icon">💖</div>
@@ -800,7 +791,6 @@ export default function App() {
           <span className="hp-tagline-small">AI-powered bonding activities</span>
         </header>
 
-        {/* Hero */}
         {step === 0 && (
           <div className="hp-hero">
             <h1>Make playtime <em>matter.</em></h1>
@@ -808,7 +798,6 @@ export default function App() {
           </div>
         )}
 
-        {/* Step indicator */}
         <div className="hp-steps">
           {STEPS.map((label, i) => (
             <div key={i} style={{ display: "flex", alignItems: "center" }}>
@@ -825,21 +814,16 @@ export default function App() {
           ))}
         </div>
 
-        {/* ── Step 0: Age ── */}
         {step === 0 && (
           <div className="hp-card">
             <p className="hp-card-label">Step 1 of 3</p>
             <h2>How old is your child?</h2>
             <p className="hp-card-sub">Slide to select your child's age — we'll tailor everything to their developmental stage.</p>
-
             <div className="hp-age-display">
               <div className="hp-age-num">{age}</div>
               <div className="hp-age-unit">{age === 1 ? "year old" : "years old"}</div>
-              <div>
-                <span className="hp-age-stage">{getAgeStage(age)}</span>
-              </div>
+              <div><span className="hp-age-stage">{getAgeStage(age)}</span></div>
             </div>
-
             <input
               type="range"
               min={1} max={18} value={age}
@@ -853,20 +837,17 @@ export default function App() {
               <span>12 yrs</span>
               <span>18 yrs</span>
             </div>
-
             <button className="hp-btn-primary" onClick={() => setStep(1)}>
               Continue →
             </button>
           </div>
         )}
 
-        {/* ── Step 1: Interests ── */}
         {step === 1 && (
           <div className="hp-card">
             <p className="hp-card-label">Step 2 of 3</p>
             <h2>What does {age === 1 ? "your baby" : `your ${age}-year-old`} love?</h2>
-            <p className="hp-card-sub">Pick as many as you like — or add your own. The more you share, the better the activity.</p>
-
+            <p className="hp-card-sub">Pick as many as you like — or add your own.</p>
             <div className="hp-interest-grid">
               {INTERESTS.map(({ label, emoji }) => (
                 <button
@@ -878,7 +859,6 @@ export default function App() {
                 </button>
               ))}
             </div>
-
             <div className="hp-chip-custom">
               <input
                 className="hp-input-inline"
@@ -889,18 +869,11 @@ export default function App() {
               />
               <button className="hp-btn-add" onClick={addCustom}>+ Add</button>
             </div>
-
-            {interests.filter(i => !INTERESTS.map(x=>x.label).includes(i)).map(ci => (
+            {interests.filter((i) => !INTERESTS.map((x) => x.label).includes(i)).map((ci) => (
               <div key={ci} style={{ marginTop: "0.5rem" }}>
-                <button
-                  className="hp-chip selected"
-                  onClick={() => toggleInterest(ci)}
-                >
-                  ✦ {ci}
-                </button>
+                <button className="hp-chip selected" onClick={() => toggleInterest(ci)}>✦ {ci}</button>
               </div>
             ))}
-
             <div className="hp-btn-row">
               <button className="hp-btn-secondary" onClick={() => setStep(0)}>← Back</button>
               <button
@@ -915,13 +888,11 @@ export default function App() {
           </div>
         )}
 
-        {/* ── Step 2: Setup ── */}
         {step === 2 && (
           <div className="hp-card">
             <p className="hp-card-label">Step 3 of 3</p>
             <h2>Where & how long?</h2>
             <p className="hp-card-sub">We'll match the activity to your setting and the time you have together.</p>
-
             <p style={{ fontSize: "0.78rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--ink-faint)", marginBottom: "0.6rem", fontWeight: 500 }}>Setting</p>
             <div className="hp-setting-grid">
               {SETTINGS.map(({ value, label, emoji }) => (
@@ -935,7 +906,6 @@ export default function App() {
                 </div>
               ))}
             </div>
-
             <p style={{ fontSize: "0.78rem", letterSpacing: "0.12em", textTransform: "uppercase", color: "var(--ink-faint)", margin: "1.5rem 0 0.6rem", fontWeight: 500 }}>Time Available</p>
             <div className="hp-time-grid">
               {TIMES.map(({ value, label }) => (
@@ -948,7 +918,6 @@ export default function App() {
                 </button>
               ))}
             </div>
-
             <div className="hp-btn-row">
               <button className="hp-btn-secondary" onClick={() => setStep(1)}>← Back</button>
               <button
@@ -963,7 +932,6 @@ export default function App() {
           </div>
         )}
 
-        {/* ── Step 3: Result ── */}
         {step === 3 && (
           <div className="hp-card hp-result">
             {loading ? (
@@ -982,32 +950,24 @@ export default function App() {
                 <div className="hp-result-badge">
                   ✦ &nbsp; Activity ready for your {getAgeStage(age).toLowerCase()}
                 </div>
-
                 <div className="hp-result-meta">
                   <span className="hp-meta-tag">Age {age}</span>
                   <span className="hp-meta-tag">{getAgeStage(age)}</span>
                   <span className="hp-meta-tag sage">{time} min · {setting}</span>
-                  {interests.slice(0, 2).map(i => (
+                  {interests.slice(0, 2).map((i) => (
                     <span key={i} className="hp-meta-tag sage">{i}</span>
                   ))}
                 </div>
-
                 <div className="hp-result-content">{activity}</div>
-
                 <div className="hp-result-actions">
-                  <button className="hp-btn-action primary" onClick={generateActivity}>
-                    Try Another ↺
-                  </button>
-                  <button className="hp-btn-action outline" onClick={reset}>
-                    Start Over
-                  </button>
+                  <button className="hp-btn-action primary" onClick={generateActivity}>Try Another ↺</button>
+                  <button className="hp-btn-action outline" onClick={reset}>Start Over</button>
                 </div>
               </>
             )}
           </div>
         )}
 
-        {/* Footer */}
         <footer className="hp-footer">
           <p>Built with 💖 by <a href="https://eminatoric.github.io" target="_blank" rel="noreferrer">Emina Toric</a> · Child Development × AI</p>
         </footer>
