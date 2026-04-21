@@ -8,7 +8,7 @@ An AI-powered app that generates creative, developmentally appropriate bonding a
 
 ## Why I Built This
 
-I have two master's degrees, one in Computer Science and one in Child and Human Development. For a long time those two things lived in separate parts of my life. HeartPlay is what happened when they finally met.
+I have two master's degrees, one in Computer Science and one in Child and Human Development. For a long time those two things lived in separate parts of my life, now they finally meet.
 
 Most parenting apps give you generic activity lists. This one actually thinks about where a child is developmentally and what kind of interaction is going to be meaningful for them at that age. A 2-year-old and a 9-year-old are not just different sizes. They are in completely different developmental stages and they need completely different things from the adults in their lives.
 
